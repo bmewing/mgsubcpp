@@ -23,7 +23,7 @@ std::string rcpp_mgsub(std::string string, std::vector<std::string> match, std::
     j = 0;
     for(int i=0;i < match.size();i++){
       std::regex rc(match[i], std::regex_constants::collate);
-      std::regex ric(match[i], std::regex_constants::icase=ic | std::regex_constants::collate);
+      std::regex ric(match[i], std::regex_constants::icase | std::regex_constants::collate);
       if(ic){
         r = ric;
       } else {
