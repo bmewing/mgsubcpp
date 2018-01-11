@@ -6,15 +6,15 @@
 using namespace Rcpp;
 
 // rcpp_mgsub
-std::string rcpp_mgsub(std::string string, std::vector<std::string> match, std::vector<std::string> replace, bool ic);
+std::string rcpp_mgsub(std::string string, std::vector<std::string> const& match, std::vector<std::string> const& replace, bool const& ic);
 RcppExport SEXP _mgsubcpp_rcpp_mgsub(SEXP stringSEXP, SEXP matchSEXP, SEXP replaceSEXP, SEXP icSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type string(stringSEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type match(matchSEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type replace(replaceSEXP);
-    Rcpp::traits::input_parameter< bool >::type ic(icSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> const& >::type match(matchSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> const& >::type replace(replaceSEXP);
+    Rcpp::traits::input_parameter< bool const& >::type ic(icSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_mgsub(string, match, replace, ic));
     return rcpp_result_gen;
 END_RCPP
