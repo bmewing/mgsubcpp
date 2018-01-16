@@ -13,7 +13,15 @@ std::string rcpp_mgsub(std::string string, std::vector<std::string> const& match
   std::string prefix = string;
   std::string detected;
   std::string suffix;
-  auto flags = (ic ? std::regex_constants::icase | std::regex_constants::collate : std::regex_constants::collate);
+
+  std::regex::flag_type flags;
+  flags |= std::regex_constants::optimize;
+  if(ic) flags |= std::regex_constants::icase;
+
+  std::vector<std::regex> r(match.size());
+  std::transform(match.begin(), match.end(), r.begin(),
+                 [&flags](std::string m) {return std::regex (m, flags);});
+
   int j=0;
   while(string.size() > 0){
     prefix = string;
@@ -21,24 +29,14 @@ std::string rcpp_mgsub(std::string string, std::vector<std::string> const& match
     suffix = "";
     j = 0;
     for(int i=0;i < match.size();i++){
-      std::regex r(match[i], flags);
-      if (std::regex_search(string,matches, r)) {
+      if (std::regex_search(string,matches, r[i])) {
         std::string pr = matches.prefix();
         std::string m = matches[0];
-        if(pr.size() <= prefix.size()){
-          if(pr.size() < prefix.size()){
-            prefix = pr;
-            detected = m;
-            suffix = matches.suffix();
-            j=i;
-          } else {
-            if(m.size() > detected.size()){
-              prefix = pr;
-              detected = m;
-              suffix = matches.suffix();
-              j=i;
-            }
-          }
+        if(pr.size() < prefix.size() || (pr.size() == prefix.size() && m.size() > detected.size())){
+          prefix = pr;
+          detected = m;
+          suffix = matches.suffix();
+          j=i;
         }
       }
     }
@@ -46,8 +44,7 @@ std::string rcpp_mgsub(std::string string, std::vector<std::string> const& match
       newString = newString+string;
       string = "";
     } else {
-      std::regex r(match[j], flags);
-      newString = newString+prefix+std::regex_replace(detected,r,replace[j],std::regex_constants::format_sed);
+      newString = newString+prefix+std::regex_replace(detected,r[j],replace[j],std::regex_constants::format_sed);
       string = suffix;
     }
   }
